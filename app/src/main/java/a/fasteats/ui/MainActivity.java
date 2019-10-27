@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -13,8 +15,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import a.fasteats.R;
+import a.fasteats.models.Restaurant;
+import a.fasteats.utils.RestaurantGen;
 
 public class MainActivity extends AppCompatActivity {
+    FirebaseFirestore firestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        firestore = FirebaseFirestore.getInstance();
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -49,9 +56,17 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            // TODO(developer): Добавить случайные рестораны
+            // Получение ссылки на созданную коллекцию ресторанов «restaurants»:
+            CollectionReference restaurants = firestore.collection("restaurants");
+            for (int i = 0; i < 9; i++) {
+                // Получить случайным образом экземпляр объекта (POJO) Restaurant
+                Restaurant restaurant = RestaurantGen.getRandom(this);
+                // Добавляем новый документ «restaurant» в коллекцию «restaurants»:
+                restaurants.add(restaurant);
+            }
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }
